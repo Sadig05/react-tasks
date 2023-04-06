@@ -1,9 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Button, Checkbox, Form, Input, Select, Spin} from 'antd';
 import axios from "../utils/axios";
 import {useParams, useNavigate} from "react-router-dom";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import {ThemeContext} from "../ThemeContext";
 interface UserFormProps {
     isEdit: boolean;
     userID: any;
@@ -40,6 +41,7 @@ const UserForm: React.FC<UserFormProps> = ({ isEdit, userID}: UserFormProps) => 
     const { id } = useParams<{ id: string }>();
     const [user, setUser] = useState<DataType | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const { theme } = useContext(ThemeContext);
     const navigate = useNavigate();
     const [form] = Form.useForm();
     useEffect(() => {
@@ -91,11 +93,11 @@ const UserForm: React.FC<UserFormProps> = ({ isEdit, userID}: UserFormProps) => 
         return <Spin size="large" />;
     }
     return (
-            <main className='userFormContainer'>
+            <main className='userFormContainer' style={{ background: theme === "light" ? "#f0f0f0" : "#333",  color: theme === "light" ? "black" : "white" }}>
                 <Form
                     form={form}
                     name="basic"
-                    labelCol={{ span: 8 }}
+                    labelCol={{ span: 8, style: { color: theme === "light" ? "black" : "white" } }}
                     wrapperCol={{ span: 16 }}
                     style={{ maxWidth: 600 }}
                     initialValues={user ? user : {}}

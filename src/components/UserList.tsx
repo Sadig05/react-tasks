@@ -7,8 +7,9 @@ import {Spin} from 'antd';
 import { Link } from 'react-router-dom';
 import UserForm from "./UserForm";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
-
-
+import { ThemeProvider } from '../ThemeProvider'
+import {ThemeContext, Theme} from '../ThemeContext'
+import {useContext} from "react";
 // import axios from "axios";
 interface DataType {
     id: number;
@@ -115,7 +116,7 @@ const UserList: React.FC = () => {
     const [users, setUsers] = useState<DataType[]>([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
-
+    const { theme } = useContext(ThemeContext);
     const fetchUsers = async () => {
         setLoading(true);
         const params = search ? { q: search } : {};
@@ -141,7 +142,7 @@ const UserList: React.FC = () => {
     };
 
     return (
-        <>
+        <div style={{ background: theme === "light" ? "#f0f0f0" : "#333" }}>
             <Space>
                 <Button type="primary">
                     <Link to="/user-form">Add user</Link>
@@ -154,7 +155,9 @@ const UserList: React.FC = () => {
                     onSearch={handleSearch}
                     style={{ width: 300, margin: "16px 0" }}
                 />
+
             </Space>
+
 
 
             {/*<Button onClick={clearSearch}>Clear</Button>*/}
@@ -166,7 +169,7 @@ const UserList: React.FC = () => {
                     onChange={onChange}
                 />
             </Spin>
-        </>
+        </div>
     );
 };
 
