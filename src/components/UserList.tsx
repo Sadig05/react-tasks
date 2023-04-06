@@ -11,7 +11,7 @@ import { ThemeProvider } from '../ThemeProvider'
 import {ThemeContext, Theme} from '../ThemeContext'
 import {useContext} from "react";
 // import axios from "axios";
-interface DataType {
+export interface DataType {
     id: number;
     first_name: string;
     last_name: string;
