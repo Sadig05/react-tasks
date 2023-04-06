@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Button, Table} from 'antd';
+import {Button, Table, Input, Space} from 'antd';
 import type {ColumnsType, TableProps} from 'antd/es/table';
 import {useState} from "react";
 import axios from "../utils/axios"
@@ -25,7 +25,10 @@ const columns: ColumnsType<DataType> = [
         dataIndex: 'first_name',
         sorter: (a, b) => a.first_name.localeCompare(b.first_name),
         width: '20%',
+        // onFilter: (value: string, record) => record.first_name.toLowerCase().startsWith(value.toLowerCase()),
+        filterSearch: true
     },
+
     {
         title: 'Last name',
         dataIndex: 'last_name',
@@ -63,6 +66,10 @@ const columns: ColumnsType<DataType> = [
                 text: 'Genderfluid',
                 value: 'Genderfluid',
             },
+            {
+                text: 'Genderqueer',
+                value: 'Genderqueer',
+            }
         ],
         onFilter: (value: string, record) => record.gender.startsWith(value),
         filterSearch: true,
@@ -105,36 +112,64 @@ const onChange: TableProps<DataType>['onChange'] = (pagination, filters, sorter,
 };
 
 const UserList: React.FC = () => {
-    const [users, setUsers] = useState<DataType[]>([])
+    const [users, setUsers] = useState<DataType[]>([]);
     const [loading, setLoading] = useState(false);
-
+    const [search, setSearch] = useState("");
 
     const fetchUsers = async () => {
-        setLoading(true)
-        const result = await axios.get('/users');
-        console.log(result.data)
-        setUsers(result.data)
-        setLoading(false)
-    }
+        setLoading(true);
+        const params = search ? { q: search } : {};
+        const result = await axios.get("/users", { params });
+        console.log(params);
+        console.log(result.data);
+        setUsers(result.data);
+        setLoading(false);
+    };
+
+
 
     useEffect(() => {
         fetchUsers();
-    }, []);
+    }, [search]);
+
+    const handleSearch = (value: string) => {
+        setSearch(value);
+    };
+
+    const clearSearch = () => {
+        setSearch("");
+    };
 
     return (
         <>
-            <Button type="primary"><Link to="/user-form">Add user</Link></Button>
+            <Space>
+                <Button type="primary">
+                    <Link to="/user-form">Add user</Link>
+                </Button>
+
+                <Input.Search
+                    placeholder="Search user"
+                    allowClear
+                    enterButton="Search"
+                    onSearch={handleSearch}
+                    style={{ width: 300, margin: "16px 0" }}
+                />
+            </Space>
+
+
+            {/*<Button onClick={clearSearch}>Clear</Button>*/}
 
             <Spin spinning={loading}>
-                <Table columns={columns}
-                       dataSource={users.map(user => ({...user, key: user.id}))}
-                       onChange={onChange}/>
+                <Table
+                    columns={columns}
+                    dataSource={users.map(user => ({...user, key: user.id}))}
+                    onChange={onChange}
+                />
             </Spin>
         </>
+    );
+};
 
-
-    )
-}
 
 
 export default UserList;
